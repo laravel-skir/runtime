@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace LaravelSkir\Runtime;
 
 use DateTimeInterface;
-use InvalidArgumentException;
 use JsonException;
+use LaravelSkir\Runtime\Exceptions\SkirRuntimeException;
 
 final class DenseJson
 {
@@ -22,7 +22,7 @@ final class DenseJson
         try {
             $value = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
-            throw new InvalidArgumentException("Invalid dense JSON: {$exception->getMessage()}", previous: $exception);
+            throw SkirRuntimeException::invalidDenseJson($exception->getMessage(), $exception);
         }
 
         return self::decode($type, $value);
@@ -86,7 +86,7 @@ final class DenseJson
             return self::isSafeIntegerString($value) ? (int) $value : $value;
         }
 
-        throw new InvalidArgumentException('Skir int64/hash64 values must be integers or integer strings.');
+        throw SkirRuntimeException::invalidValue('Skir int64/hash64 values must be integers or integer strings.');
     }
 
     private static function encodeFloat(float $value): float|string
@@ -130,7 +130,7 @@ final class DenseJson
         $decoded = base64_decode((string) $value, true);
 
         if ($decoded === false) {
-            throw new InvalidArgumentException('Skir bytes values must be valid base64 strings.');
+            throw SkirRuntimeException::invalidValue('Skir bytes values must be valid base64 strings.');
         }
 
         return $decoded;
@@ -139,7 +139,7 @@ final class DenseJson
     private static function encodeArray(Type $type, mixed $value): array
     {
         if (! is_array($value)) {
-            throw new InvalidArgumentException('Skir array values must be PHP arrays.');
+            throw SkirRuntimeException::invalidValue('Skir array values must be PHP arrays.');
         }
 
         $itemType = self::requireItemType($type);
@@ -153,7 +153,7 @@ final class DenseJson
     private static function decodeArray(Type $type, mixed $value): array
     {
         if (! is_array($value)) {
-            throw new InvalidArgumentException('Skir array JSON values must be arrays.');
+            throw SkirRuntimeException::invalidValue('Skir array JSON values must be arrays.');
         }
 
         $itemType = self::requireItemType($type);
@@ -167,7 +167,7 @@ final class DenseJson
     private static function encodeStruct(Type $type, mixed $value): array
     {
         if (! is_array($value)) {
-            throw new InvalidArgumentException('Skir struct values must be associative arrays.');
+            throw SkirRuntimeException::invalidValue('Skir struct values must be associative arrays.');
         }
 
         $encodedFields = [];
@@ -205,7 +205,7 @@ final class DenseJson
     private static function decodeStruct(Type $type, mixed $value): array
     {
         if (! is_array($value)) {
-            throw new InvalidArgumentException('Skir struct JSON values must be arrays.');
+            throw SkirRuntimeException::invalidValue('Skir struct JSON values must be arrays.');
         }
 
         $decoded = [];
@@ -255,7 +255,7 @@ final class DenseJson
     private static function encodeEnum(Type $type, mixed $value): int|array
     {
         if (! $value instanceof EnumValue) {
-            throw new InvalidArgumentException('Skir enum values must be EnumValue instances.');
+            throw SkirRuntimeException::invalidValue('Skir enum values must be EnumValue instances.');
         }
 
         if ($value->name === 'UNKNOWN') {
@@ -269,7 +269,7 @@ final class DenseJson
         }
 
         if (! $variant->isWrapper()) {
-            throw new InvalidArgumentException("Skir enum variant [{$value->name}] does not carry a payload.");
+            throw SkirRuntimeException::invalidValue("Skir enum variant [{$value->name}] does not carry a payload.");
         }
 
         return [
@@ -289,13 +289,13 @@ final class DenseJson
         }
 
         if (! is_array($value)) {
-            throw new InvalidArgumentException('Skir enum JSON values must be integers or wrapper arrays.');
+            throw SkirRuntimeException::invalidValue('Skir enum JSON values must be integers or wrapper arrays.');
         }
 
         $variant = self::variantWithNumber($type, (int) $value[0]);
 
         if (! $variant->isWrapper()) {
-            throw new InvalidArgumentException("Skir enum variant [{$variant->name}] does not carry a payload.");
+            throw SkirRuntimeException::invalidValue("Skir enum variant [{$variant->name}] does not carry a payload.");
         }
 
         return EnumValue::wrapper($variant->name, self::decodeValue($variant->payloadType, $value[1]));
@@ -342,7 +342,7 @@ final class DenseJson
     private static function requireItemType(Type $type): Type
     {
         if ($type->itemType === null) {
-            throw new InvalidArgumentException("Skir [{$type->kind->value}] type does not define an item type.");
+            throw SkirRuntimeException::invalidValue("Skir [{$type->kind->value}] type does not define an item type.");
         }
 
         return $type->itemType;
@@ -351,7 +351,7 @@ final class DenseJson
     private static function requireFieldType(Field $field): Type
     {
         if ($field->type === null) {
-            throw new InvalidArgumentException("Skir field [{$field->number}] does not define a type.");
+            throw SkirRuntimeException::invalidValue("Skir field [{$field->number}] does not define a type.");
         }
 
         return $field->type;
@@ -365,7 +365,7 @@ final class DenseJson
             }
         }
 
-        throw new InvalidArgumentException("Skir struct field [{$number}] is not defined.");
+        throw SkirRuntimeException::invalidValue("Skir struct field [{$number}] is not defined.");
     }
 
     private static function variantWithName(Type $type, string $name): Variant
@@ -376,7 +376,7 @@ final class DenseJson
             }
         }
 
-        throw new InvalidArgumentException("Skir enum variant [{$name}] is not defined.");
+        throw SkirRuntimeException::invalidValue("Skir enum variant [{$name}] is not defined.");
     }
 
     private static function variantWithNumber(Type $type, int $number): Variant
@@ -387,13 +387,13 @@ final class DenseJson
             }
         }
 
-        throw new InvalidArgumentException("Skir enum variant [{$number}] is not defined.");
+        throw SkirRuntimeException::invalidValue("Skir enum variant [{$number}] is not defined.");
     }
 
     private static function isSafeIntegerString(string $value): bool
     {
         if (! preg_match('/^-?\d+$/', $value)) {
-            throw new InvalidArgumentException('Skir int64/hash64 string values must contain only digits.');
+            throw SkirRuntimeException::invalidValue('Skir int64/hash64 string values must contain only digits.');
         }
 
         $integer = (int) $value;

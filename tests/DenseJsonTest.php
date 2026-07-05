@@ -6,6 +6,7 @@ namespace LaravelSkir\Runtime\Tests;
 
 use LaravelSkir\Runtime\DenseJson;
 use LaravelSkir\Runtime\EnumValue;
+use LaravelSkir\Runtime\Exceptions\SkirRuntimeException;
 use LaravelSkir\Runtime\Field;
 use LaravelSkir\Runtime\Type;
 use LaravelSkir\Runtime\Variant;
@@ -156,7 +157,7 @@ final class DenseJsonTest extends TestCase
 
     public function test_it_rejects_invalid_dense_json_values(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(SkirRuntimeException::class);
         $this->expectExceptionMessage('Skir array JSON values must be arrays.');
 
         DenseJson::fromJson(Type::array(Type::string()), '"not-array"');
