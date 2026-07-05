@@ -178,6 +178,16 @@ final class DenseJson
 
         ksort($encodedFields);
 
+        if ($encodedFields !== []) {
+            $lastNumber = max(array_keys($encodedFields));
+
+            for ($number = 0; $number <= $lastNumber; $number++) {
+                $encodedFields[$number] ??= 0;
+            }
+
+            ksort($encodedFields);
+        }
+
         while ($encodedFields !== []) {
             $lastNumber = array_key_last($encodedFields);
             $field = self::fieldWithNumber($type, $lastNumber);
