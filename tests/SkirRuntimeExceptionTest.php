@@ -20,6 +20,14 @@ final class SkirRuntimeExceptionTest extends TestCase
         DenseJson::fromJson(Type::string(), '{');
     }
 
+    public function test_it_uses_package_scoped_exceptions_for_values_that_cannot_be_encoded_as_json(): void
+    {
+        $this->expectException(SkirRuntimeException::class);
+        $this->expectExceptionMessage('Invalid dense JSON: Malformed UTF-8 characters, possibly incorrectly encoded');
+
+        DenseJson::toJson(Type::string(), "\xB1\x31");
+    }
+
     public function test_package_scoped_exceptions_remain_invalid_argument_exceptions(): void
     {
         $exception = new SkirRuntimeException('Invalid Skir value.');

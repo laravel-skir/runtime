@@ -14,7 +14,11 @@ final class DenseJson
 
     public static function toJson(Type $type, mixed $value): string
     {
-        return json_encode(self::encode($type, $value), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+        try {
+            return json_encode(self::encode($type, $value), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
+        } catch (JsonException $exception) {
+            throw SkirRuntimeException::invalidDenseJson($exception->getMessage(), $exception);
+        }
     }
 
     public static function fromJson(Type $type, string $json): mixed
