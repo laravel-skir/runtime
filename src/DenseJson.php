@@ -195,8 +195,11 @@ final class DenseJson
         while ($encodedFields !== []) {
             $lastNumber = array_key_last($encodedFields);
             $field = self::fieldWithNumber($type, $lastNumber);
+            $encodedDefault = $field === null
+                ? 0
+                : self::encodedDefaultForField($field);
 
-            if ($encodedFields[$lastNumber] !== self::encodedDefaultForField($field)) {
+            if ($encodedFields[$lastNumber] !== $encodedDefault) {
                 break;
             }
 
@@ -361,7 +364,7 @@ final class DenseJson
         return $field->type;
     }
 
-    private static function fieldWithNumber(Type $type, int $number): Field
+    private static function fieldWithNumber(Type $type, int $number): ?Field
     {
         foreach ($type->fields as $field) {
             if ($field->number === $number) {
@@ -369,7 +372,7 @@ final class DenseJson
             }
         }
 
-        throw SkirRuntimeException::invalidValue("Skir struct field [{$number}] is not defined.");
+        return null;
     }
 
     private static function variantWithName(Type $type, string $name): Variant

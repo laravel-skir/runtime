@@ -59,6 +59,21 @@ final class DenseJsonTest extends TestCase
         $this->assertSame('[0,0,"notifications",0,0,1]', $json);
     }
 
+    public function test_it_trims_trailing_defaults_from_sparse_structs(): void
+    {
+        $settings = Type::struct([
+            Field::value('name', 2, Type::string()),
+            Field::value('enabled', 5, Type::bool()),
+        ]);
+
+        $json = DenseJson::toJson($settings, [
+            'name' => 'notifications',
+            'enabled' => false,
+        ]);
+
+        $this->assertSame('[0,0,"notifications"]', $json);
+    }
+
     public function test_it_decodes_structs_with_missing_trailing_fields(): void
     {
         $user = Type::struct([
