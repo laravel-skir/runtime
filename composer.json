@@ -3,6 +3,18 @@
     "description": "PHP runtime support for Skir serialization and descriptors.",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "php",
+        "rpc",
+        "serialization",
+        "skir"
+    ],
+    "homepage": "https://github.com/laravel-skir/runtime",
+    "support": {
+        "issues": "https://github.com/laravel-skir/runtime/issues",
+        "source": "https://github.com/laravel-skir/runtime"
+    },
     "authors": [
         {
             "name": "Maxim Kerstens",
@@ -26,6 +38,11 @@
             "LaravelSkir\\Runtime\\Tests\\": "tests/"
         }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
     "scripts": {
         "format": "pint",
         "test": "phpunit"
@@ -36,4 +53,3 @@
     "minimum-stability": "stable",
     "prefer-stable": true
 }
-

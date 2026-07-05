@@ -44,5 +44,8 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      - name: Validate package
+        run: composer validate --strict
+
       - name: Run tests
         run: composer test
