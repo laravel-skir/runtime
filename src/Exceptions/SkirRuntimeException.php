@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelSkir\Runtime\Exceptions;
+namespace Skir\Runtime\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace LaravelSkir\Runtime\Tests;
+namespace Skir\Runtime\Tests;
 
-use LaravelSkir\Runtime\Cbor;
-use LaravelSkir\Runtime\Exceptions\SkirRuntimeException;
-use LaravelSkir\Runtime\Field;
-use LaravelSkir\Runtime\MethodDescriptor;
-use LaravelSkir\Runtime\Type;
 use PHPUnit\Framework\TestCase;
+use Skir\Runtime\Cbor;
+use Skir\Runtime\Exceptions\SkirRuntimeException;
+use Skir\Runtime\Field;
+use Skir\Runtime\MethodDescriptor;
+use Skir\Runtime\Type;
 
 final class CborTest extends TestCase
 {

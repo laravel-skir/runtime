@@ -1,5 +1,5 @@
 {
-    "name": "laravel-skir/runtime",
+    "name": "php-skir/runtime",
     "description": "PHP runtime support for Skir serialization and descriptors.",
     "type": "library",
     "license": "MIT",
@@ -10,10 +10,10 @@
         "serialization",
         "skir"
     ],
-    "homepage": "https://github.com/laravel-skir/runtime",
+    "homepage": "https://github.com/php-skir/runtime",
     "support": {
-        "issues": "https://github.com/laravel-skir/runtime/issues",
-        "source": "https://github.com/laravel-skir/runtime"
+        "issues": "https://github.com/php-skir/runtime/issues",
+        "source": "https://github.com/php-skir/runtime"
     },
     "authors": [
         {
@@ -31,12 +31,12 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelSkir\\Runtime\\": "src/"
+            "Skir\\Runtime\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelSkir\\Runtime\\Tests\\": "tests/"
+            "Skir\\Runtime\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -49,7 +49,7 @@
         "test": "phpunit"
     },
     "suggest": {
-        "spomky-labs/cbor-php": "Required when using LaravelSkir\\Runtime\\Cbor helpers."
+        "spomky-labs/cbor-php": "Required when using Skir\\Runtime\\Cbor helpers."
     },
     "config": {
         "sort-packages": true

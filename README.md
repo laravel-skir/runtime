@@ -7,7 +7,7 @@ This package is intentionally small. Laravel-specific routing and client behavio
 ## Installation
 
 ```bash
-composer require laravel-skir/runtime
+composer require php-skir/runtime
 ```
 
 ## What it provides
@@ -22,9 +22,9 @@ composer require laravel-skir/runtime
 ## Dense JSON
 
 ```php
-use LaravelSkir\Runtime\DenseJson;
-use LaravelSkir\Runtime\Field;
-use LaravelSkir\Runtime\Type;
+use Skir\Runtime\DenseJson;
+use Skir\Runtime\Field;
+use Skir\Runtime\Type;
 
 $user = Type::struct([
     Field::value('id', 0, Type::int32()),
@@ -52,7 +52,7 @@ composer require spomky-labs/cbor-php
 The runtime helper keeps CBOR wrapping shared between server and client packages:
 
 ```php
-use LaravelSkir\Runtime\Cbor;
+use Skir\Runtime\Cbor;
 
 $body = Cbor::encodeEnvelope($methodDescriptor, $request);
 $payload = Cbor::decodeEnvelope($body);
@@ -60,4 +60,4 @@ $payload = Cbor::decodeEnvelope($body);
 
 ## Current scope
 
-This runtime does not register routes, discover procedures, or make HTTP calls. Those concerns belong in the `laravel-skir/server` and `laravel-skir/client` packages.
+This runtime does not register routes, discover procedures, or make HTTP calls. Those concerns belong in the `php-skir/server` and `php-skir/client` packages.

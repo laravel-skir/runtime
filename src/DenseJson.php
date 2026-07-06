@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace LaravelSkir\Runtime;
+namespace Skir\Runtime;
 
 use DateTimeInterface;
 use JsonException;
-use LaravelSkir\Runtime\Exceptions\SkirRuntimeException;
+use Skir\Runtime\Exceptions\SkirRuntimeException;
 
 final class DenseJson
 {

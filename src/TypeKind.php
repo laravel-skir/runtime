@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelSkir\Runtime;
+namespace Skir\Runtime;
 
 enum TypeKind: string
 {

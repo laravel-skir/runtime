@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace LaravelSkir\Runtime;
+namespace Skir\Runtime;
 
 use CBOR\Decoder;
 use CBOR\Encoder;
 use CBOR\StringStream;
-use LaravelSkir\Runtime\Exceptions\SkirRuntimeException;
+use Skir\Runtime\Exceptions\SkirRuntimeException;
 use Throwable;
 
 final class Cbor

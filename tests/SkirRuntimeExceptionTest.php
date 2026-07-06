@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace LaravelSkir\Runtime\Tests;
+namespace Skir\Runtime\Tests;
 
 use InvalidArgumentException;
-use LaravelSkir\Runtime\DenseJson;
-use LaravelSkir\Runtime\Exceptions\SkirRuntimeException;
-use LaravelSkir\Runtime\Type;
 use PHPUnit\Framework\TestCase;
+use Skir\Runtime\DenseJson;
+use Skir\Runtime\Exceptions\SkirRuntimeException;
+use Skir\Runtime\Type;
 
 final class SkirRuntimeExceptionTest extends TestCase
 {
