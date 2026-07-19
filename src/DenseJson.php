@@ -293,21 +293,106 @@ final class DenseJson
             return EnumValue::constant('UNKNOWN');
         }
 
-        if (is_int($value)) {
-            return EnumValue::constant(self::variantWithNumber($type, $value)->name);
-        }
-
         if (! is_array($value)) {
-            throw SkirRuntimeException::invalidValue('Skir enum JSON values must be integers or wrapper arrays.');
+            return self::decodeScalarEnum($type, $value);
         }
 
-        $variant = self::variantWithNumber($type, (int) $value[0]);
+        if (count($value) !== 2) {
+            throw SkirRuntimeException::invalidValue('Skir enum wrapper JSON values must contain exactly a variant number and payload.');
+        }
+
+        if (! array_is_list($value)) {
+            throw SkirRuntimeException::invalidValue('Skir enum wrapper JSON values must contain exactly a variant number and payload.');
+        }
+
+        $variantNumber = self::decodeEnumVariantNumber($value[0]);
+        $variant = self::variantWithNumber($type, $variantNumber);
 
         if (! $variant->isWrapper()) {
             throw SkirRuntimeException::invalidValue("Skir enum variant [{$variant->name}] does not carry a payload.");
         }
 
         return EnumValue::wrapper($variant->name, self::decodeValue($variant->payloadType, $value[1]));
+    }
+
+    private static function decodeScalarEnum(Type $type, mixed $value): EnumValue
+    {
+        $variantNumber = self::decodeEnumVariantNumber($value);
+
+        if ($variantNumber === 0) {
+            return EnumValue::constant('UNKNOWN');
+        }
+
+        $variant = self::variantWithNumber($type, $variantNumber);
+
+        if ($variant->isWrapper()) {
+            if (! is_int($value)) {
+                throw SkirRuntimeException::invalidValue("Skir enum wrapper variant [{$variant->name}] must be encoded as a wrapper array.");
+            }
+        }
+
+        return EnumValue::constant($variant->name);
+    }
+
+    private static function decodeEnumVariantNumber(mixed $value): int
+    {
+        if (is_int($value)) {
+            return self::requireSafeEnumVariantNumber($value);
+        }
+
+        if (is_float($value)) {
+            if (! is_finite($value)) {
+                self::throwInvalidEnumVariantNumber();
+            }
+
+            if (floor($value) !== $value) {
+                self::throwInvalidEnumVariantNumber();
+            }
+
+            if ($value < -self::MAX_SAFE_JAVASCRIPT_INTEGER) {
+                self::throwInvalidEnumVariantNumber();
+            }
+
+            if ($value > self::MAX_SAFE_JAVASCRIPT_INTEGER) {
+                self::throwInvalidEnumVariantNumber();
+            }
+
+            return (int) $value;
+        }
+
+        if (is_string($value)) {
+            if (preg_match('/^-?(0|[1-9]\d*)$/', $value) !== 1) {
+                self::throwInvalidEnumVariantNumber();
+            }
+
+            $variantNumber = (int) $value;
+
+            if ((string) $variantNumber !== $value) {
+                self::throwInvalidEnumVariantNumber();
+            }
+
+            return self::requireSafeEnumVariantNumber($variantNumber);
+        }
+
+        self::throwInvalidEnumVariantNumber();
+    }
+
+    private static function requireSafeEnumVariantNumber(int $value): int
+    {
+        if ($value < -self::MAX_SAFE_JAVASCRIPT_INTEGER) {
+            self::throwInvalidEnumVariantNumber();
+        }
+
+        if ($value > self::MAX_SAFE_JAVASCRIPT_INTEGER) {
+            self::throwInvalidEnumVariantNumber();
+        }
+
+        return $value;
+    }
+
+    private static function throwInvalidEnumVariantNumber(): never
+    {
+        throw SkirRuntimeException::invalidValue('Skir enum variant numbers must be safe integer-equivalent values.');
     }
 
     private static function decodeZero(Type $type): mixed
