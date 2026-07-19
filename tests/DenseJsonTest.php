@@ -74,6 +74,30 @@ final class DenseJsonTest extends TestCase
         $this->assertSame('[0,0,"notifications"]', $json);
     }
 
+    public function test_it_preserves_explicit_null_optional_fields_before_later_values(): void
+    {
+        $address = Type::struct([
+            Field::value('city', 0, Type::string()),
+        ]);
+        $profile = Type::struct([
+            Field::value('addresses', 0, Type::optional(Type::array($address))),
+            Field::value('nickname', 1, Type::optional(Type::string())),
+            Field::value('address', 2, Type::optional($address)),
+            Field::value('name', 4, Type::string()),
+        ]);
+        $value = [
+            'addresses' => null,
+            'nickname' => null,
+            'address' => null,
+            'name' => 'John Doe',
+        ];
+
+        $json = DenseJson::toJson($profile, $value);
+
+        $this->assertSame('[null,null,null,0,"John Doe"]', $json);
+        $this->assertSame($value, DenseJson::fromJson($profile, $json));
+    }
+
     public function test_it_decodes_structs_with_missing_trailing_fields(): void
     {
         $user = Type::struct([

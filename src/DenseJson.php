@@ -186,7 +186,9 @@ final class DenseJson
             $lastNumber = max(array_keys($encodedFields));
 
             for ($number = 0; $number <= $lastNumber; $number++) {
-                $encodedFields[$number] ??= 0;
+                if (! array_key_exists($number, $encodedFields)) {
+                    $encodedFields[$number] = 0;
+                }
             }
 
             ksort($encodedFields);
