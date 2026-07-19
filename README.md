@@ -1,5 +1,11 @@
 # Laravel Skir Runtime
 
+[![Tests](https://github.com/php-skir/runtime/actions/workflows/tests.yml/badge.svg)](https://github.com/php-skir/runtime/actions/workflows/tests.yml)
+[![Coverage](https://raw.githubusercontent.com/php-skir/runtime/badges/coverage.svg)](https://github.com/php-skir/runtime/actions/workflows/tests.yml)
+[![Composer](https://img.shields.io/packagist/v/php-skir/runtime?label=composer&logo=composer)](https://packagist.org/packages/php-skir/runtime)
+[![PHP](https://img.shields.io/badge/PHP-%5E8.3-777BB4?logo=php&logoColor=white)](https://packagist.org/packages/php-skir/runtime)
+[![License](https://img.shields.io/github/license/php-skir/runtime)](LICENSE)
+
 Framework-agnostic PHP runtime support for Skir serialization and descriptors.
 
 This package is intentionally small. Laravel-specific routing and client behavior live in separate packages.

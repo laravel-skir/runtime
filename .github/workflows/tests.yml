@@ -5,6 +5,10 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   tests:
@@ -21,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -49,3 +53,42 @@ jobs:
 
       - name: Run tests
         run: composer test
+
+  coverage:
+    name: Coverage
+    if: github.ref == 'refs/heads/main'
+    needs: tests
+    runs-on: ubuntu-latest
+    concurrency:
+      group: coverage-badge
+      cancel-in-progress: false
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Measure coverage
+        run: |
+          mkdir -p build
+          vendor/bin/phpunit --coverage-clover=build/coverage.xml --coverage-filter=src
+          php -r '$xml = simplexml_load_file("build/coverage.xml"); $metrics = $xml->project->metrics; $statements = (int) $metrics["statements"]; $covered = (int) $metrics["coveredstatements"]; $percentage = $statements > 0 ? ($covered / $statements) * 100 : 0; file_put_contents("build/coverage-percentage.txt", (string) $percentage);'
+
+      - name: Generate coverage badge
+        run: node .github/scripts/write-coverage-badge.mjs "$(cat build/coverage-percentage.txt)" build/coverage.svg
+
+      - name: Publish coverage badge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/publish-coverage-badge.sh build/coverage.svg
